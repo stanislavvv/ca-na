@@ -139,7 +139,7 @@ commonName			= Common Name (eg, your name or your server\'s hostname)
 commonName_max			= 64
 
 emailAddress			= Email Address
-emailAddress_default		= noc@domain.ru
+emailAddress_default		= noc @ domain.ru   # github need to protect emails
 emailAddress_max		= 40
 
 # JY -- added for batch mode

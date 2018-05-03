@@ -37,5 +37,5 @@ export KEY_COUNTRY="RU"
 export KEY_PROVINCE="Sverdlovski"
 export KEY_CITY="Yekaterinburg"
 export KEY_ORG="NA-Ext"
-export KEY_EMAIL="info@domain.ru"
+export KEY_EMAIL="info @ domain.ru"  # github need to protect emails
 export CN=""
