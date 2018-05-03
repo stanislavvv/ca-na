@@ -1,0 +1,26 @@
+#!/bin/bash -eu
+
+## создаём сертификат для сотрудника с логином login и экспортируем его в .p12
+#~ CN     login@netangels.ru
+
+. conf/vars
+
+CN="${1:-}"
+[[ -n "$CN" ]] || {
+    echo "Need CommonName parameter"
+    echo "Example: $0 login@netangels.ru"
+    exit 0
+}
+
+export CN
+export SAN=""
+
+# key/csr
+$OPENSSL req -batch -days $KEY_EXPIRE -new -nodes -newkey rsa:$KEY_SIZE \
+    -keyout "$KEY_DIR_BYNAME/$CN.key" -out "$KEY_DIR_BYNAME/$CN.csr" -config "$CONFIG"
+
+# crt
+$OPENSSL ca -batch -days $KEY_EXPIRE -out "$KEY_DIR_BYNAME/$CN.crt" -in "$KEY_DIR_BYNAME/$CN.csr" -config "$CONFIG"
+
+# p12
+$OPENSSL pkcs12 -export -inkey "$KEY_DIR_BYNAME/$CN.key" -in "$KEY_DIR_BYNAME/$CN.crt" -certfile "$CA.crt" -out "$KEY_DIR_BYNAME/$CN.p12"

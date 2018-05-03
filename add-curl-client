@@ -1,0 +1,23 @@
+#!/bin/bash -eu
+
+## создаём клиентский сертификат для общения curl с https-апи
+#~ CN   имя службы, для которой нужен сертификат (например, backup)
+
+. conf/vars
+
+CN="${1:-}"
+[[ -n "$CN" ]] || {
+    echo "Need CommonName parameter"
+    echo "Example: $0 clientname"
+    exit 0
+}
+
+export CN
+export SAN=""
+
+# key/csr
+$OPENSSL req -batch -days $KEY_EXPIRE -new -nodes -newkey rsa:$KEY_SIZE \
+    -keyout "$KEY_DIR_BYNAME/$CN.key" -out "$KEY_DIR_BYNAME/$CN.csr" -config "$CONFIG"
+
+# crt
+$OPENSSL ca -batch -days $KEY_EXPIRE -out "$KEY_DIR_BYNAME/$CN.crt" -in "$KEY_DIR_BYNAME/$CN.csr" -config "$CONFIG"

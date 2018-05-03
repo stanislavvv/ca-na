@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+. conf/vars
+
+if [[ -f "$CA.key" && -f "$CA.crt" ]]; then
+    echo "CA alredy inited, exiting..."
+    exit 1
+fi
+
+mkdir -p var keys "$CA_DIR" "$KEY_DIR_BYSERIAL" "$KEY_DIR_BYNAME" "$KEY_DIR_REVOKED"
+
+export SAN=""
+
+$OPENSSL req -batch -days $CA_EXPIRE -nodes -new -newkey rsa:$KEY_SIZE \
+        -x509 -keyout "$CA.key" -out "$CA.crt" -config "$CONFIG" && \
+chmod 0600 "$CA.key"
+touch "$CA_DIR/index.txt"
+echo "01" > "$CA_DIR/serial"

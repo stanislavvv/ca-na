@@ -1,0 +1,30 @@
+#!/bin/bash -eu
+
+## отзываем сертификат
+#~ CN     базовое имя сертификата, как его выдаёт ./list
+
+. conf/vars
+
+CN="${1:-}"
+[[ -n "$CN" ]] || {
+    echo "Need CommonName parameter"
+    echo "Example: $0 login@netangels.ru"
+    exit 0
+}
+
+export CN
+export SAN=""
+
+# отзыв сертификата
+$OPENSSL ca -revoke "$KEY_DIR_BYNAME/$CN.crt" -config "$CONFIG"
+
+# создание crl
+$OPENSSL ca -gencrl -out "$CA_DIR/crl.pem" -config "$CONFIG" -crldays 3650
+
+# перенос отозванного в корзину
+SERIAL="$($OPENSSL x509 -in $KEY_DIR_BYNAME/$CN.crt -text -noout | grep 'Serial Number: ' | cut -f2 -d'(' | cut -f1 -d')')"
+
+find "$KEY_DIR_BYNAME" -name "${CN}*" \
+  | while read f; do
+    mv -f "$f" "$KEY_DIR_REVOKED/${SERIAL}_$(basename $f)"
+done

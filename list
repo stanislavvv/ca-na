@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+
+## вывод списка сертификатов
+
+. conf/vars
+
+find "$KEY_DIR_BYNAME" -type f -name '*.crt' \
+ | while read file; do
+    #echo ""
+    basename "$file" | sed -e 's/.crt$//'
+    #$OPENSSL x509 -in $file -text -noout | grep 'Subject: '
+done

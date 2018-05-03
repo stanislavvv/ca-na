@@ -1,0 +1,23 @@
+#!/bin/bash -eu
+
+declare -r CRLPATH="/etc/ssl/private/crl.pem"
+declare -r CRLURL="http://crl.domain.ru/crl.pem"
+
+declare -r PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+declare -r TMPDIR="$(mktemp -d)"
+trap "rm -Rf $TMPDIR" 0
+
+if wget -q -O "$TMPDIR/crl.pem" "$CRLURL"; then
+    DIFRES=0
+    diff -q "$CRLPATH" "$TMPDIR/crl.pem" >/dev/null 2>/dev/null || DIFRES=$?
+    if [[ $DIFRES -ne 0 ]]; then
+        cp -f "$TMPDIR/crl.pem" "$CRLPATH"
+        NGINX="$( which nginx )"
+        if [ -n "$NGINX" ]; then
+            $NGINX -s reload
+        fi
+    fi
+else
+    echo "Can't download $CRLURL"
+fi

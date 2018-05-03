@@ -1,0 +1,11 @@
+#!/bin/bash -eu
+
+# генерация crl.pem
+. conf/vars
+
+
+export CN
+export SAN=""
+
+# создание crl
+$OPENSSL ca -gencrl -out "$CA_DIR/crl.pem" -config "$CONFIG" -crldays 3650

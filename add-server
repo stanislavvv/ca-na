@@ -1,0 +1,30 @@
+#!/bin/bash -eu
+
+## создаём сертификат для сервера
+#~ CN       имя хоста (например, noc.netangels.ru)
+
+. conf/vars
+
+CN="${1:-}"
+[[ -n "$CN" ]] || {
+    echo "Need CommonName parameter"
+    echo "Example: $0 server.example.com"
+    exit 0
+}
+
+export CN
+
+SAN="DNS:$CN"
+export SAN
+
+# key/csr
+$OPENSSL req -batch -days $KEY_EXPIRE -new -nodes -newkey rsa:$KEY_SIZE \
+    -keyout "$KEY_DIR_BYNAME/$CN.key" -out "$KEY_DIR_BYNAME/$CN.csr" -extensions server \
+    -extensions san_env \
+    -config "$CONFIG"
+
+# crt
+$OPENSSL ca -batch -days $KEY_EXPIRE -out "$KEY_DIR_BYNAME/$CN.crt" -in "$KEY_DIR_BYNAME/$CN.csr" \
+    -extensions server \
+    -extensions san_env \
+    -md sha256 -config "$CONFIG"

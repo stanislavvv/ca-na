@@ -1,0 +1,41 @@
+# бинарник openssl
+export OPENSSL="/usr/bin/openssl"
+
+# конфиг CA
+export CONFIG=`pwd`/conf/openssl.cnf
+
+# где хранить ключи вида 01.pem
+export KEY_DIR="`pwd`/keys"
+
+# где будут лежать ключи с именами в виде серийников
+export KEY_DIR_BYSERIAL="$KEY_DIR/certs"
+
+# куда класть ключи с красивым именем
+export KEY_DIR_BYNAME="$KEY_DIR/by-name"
+
+# куда перетаскивать отозванные ключи с красивым именем
+export KEY_DIR_REVOKED="$KEY_DIR/revoked"
+
+
+# скучные цифры, которые понятны из названий переменных
+#export KEY_SIZE=4096
+export KEY_SIZE=2048
+export CA_EXPIRE=3650
+export KEY_EXPIRE=3650
+
+# местонахождение ключевой пары CA
+export CA_DIR="$KEY_DIR/ca"
+
+# базовое имя ключевой пары
+export CA="$CA_DIR/CA"
+
+# путь к crl.pem
+export CRL="$CA_DIR/crl.pem"
+
+# значения по-умолчанию для сертификатов
+export KEY_COUNTRY="RU"
+export KEY_PROVINCE="Sverdlovski"
+export KEY_CITY="Yekaterinburg"
+export KEY_ORG="NA-Ext"
+export KEY_EMAIL="info@domain.ru"
+export CN=""
