@@ -90,8 +90,7 @@ emailAddress		= optional
 
 ####################################################################
 [ req ]
-#default_bits		= 4096
-default_bits		= 2048
+default_bits		= 4096
 default_keyfile 	= privkey.pem
 distinguished_name	= req_distinguished_name
 attributes		= req_attributes
@@ -139,7 +138,8 @@ commonName			= Common Name (eg, your name or your server\'s hostname)
 commonName_max			= 64
 
 emailAddress			= Email Address
-emailAddress_default		= noc @ domain.ru   # github need to protect emails
+# change here before use:
+emailAddress_default		= noc @ domain.ru   # github need spaces to protect emails
 emailAddress_max		= 40
 
 # JY -- added for batch mode
@@ -260,6 +260,7 @@ basicConstraints = CA:true
 # You can even override a supported extension:
 # basicConstraints= critical, DER:30:03:01:01:FF
 
+
 [ crl_ext ]
 
 # CRL extensions.
@@ -286,3 +287,9 @@ init = 0
 
 [ san_env ]
 subjectAltName=${ENV::SAN}
+
+[ v3_intermediate_ca ]                                      # Intermediate CA certificate extensions
+subjectKeyIdentifier = hash                                 # Subject key identifier
+authorityKeyIdentifier = keyid:always,issuer                # Authority key identifier
+basicConstraints = critical, CA:true, pathlen:0             # Basic constraints for a CA
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign # Key usage for a CA

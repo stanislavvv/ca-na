@@ -7,9 +7,15 @@ if [[ -f "$CA.key" && -f "$CA.crt" ]]; then
     exit 1
 fi
 
-mkdir -p var keys "$CA_DIR" "$KEY_DIR_BYSERIAL" "$KEY_DIR_BYNAME" "$KEY_DIR_REVOKED"
+if [[ -z "${SAN:-}" ]]; then
+    export SAN="Netangels ROOT CA"
+fi
 
-export SAN=""
+if [[ -z "${CN:-}" ]]; then
+    export CN="ROOT"
+fi
+
+mkdir -p var keys "$CA_DIR" "$KEY_DIR_BYSERIAL" "$KEY_DIR_BYNAME" "$KEY_DIR_REVOKED"
 
 $OPENSSL req -batch -days $CA_EXPIRE -nodes -new -newkey rsa:$KEY_SIZE \
         -x509 -keyout "$CA.key" -out "$CA.crt" -config "$CONFIG" && \
