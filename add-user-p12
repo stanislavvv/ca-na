@@ -1,14 +1,14 @@
 #!/bin/bash -eu
 
 ## создаём сертификат для сотрудника с логином login и экспортируем его в .p12
-#~ CN     login@netangels.ru
+#~ CN     <email>
 
 . conf/vars
 
 CN="${1:-}"
 [[ -n "$CN" ]] || {
     echo "Need CommonName parameter"
-    echo "Example: $0 login@netangels.ru"
+    echo "Example: $0 <email>"
     exit 0
 }
 
